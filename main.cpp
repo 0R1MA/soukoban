@@ -2,6 +2,7 @@
 #include <iostream>
 #include <math.h>
 #include <memory>
+#include <vector>
 #include "Anim.h"
 #include "Player.h"
 #include "Stage.h"
@@ -26,6 +27,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::shared_ptr<Stage> stage	= std::make_shared<Stage>();
 	std::shared_ptr<Object> object	= std::make_shared<Object>();
 	
+	std::vector<std::shared_ptr<Object>> objects; // オブジェクトのリスト
+	for(int i = 0; i < 5; ++i) // 例として10個のオブジェクトを作成
+	{
+		auto obj = std::make_shared<Object>();
+		objects.emplace_back(obj); // オブジェクトをリストに追加
+	}
+
+
 	stage->Initialize(player, object); // ステージの初期化
 
 	// 描画先を裏画面にする

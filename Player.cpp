@@ -11,7 +11,7 @@ Player::Player() :Anim("date/IdleAnimations.png", "date/WalkAnimations.png")
 	position = VGet(0.0f, 0.0f, 0.0f);
 	nextPosition = VGet(0.0f, 0.0f, 0.0f);
 	direction = VGet(0.0f, 0.0f, 0.0f);
-	speed = 5.0f;
+	speed = 0.0f;
 	onKey = false;
 }
 
@@ -25,7 +25,7 @@ void Player::Initialize(VECTOR pos)
 	position = pos;
 	direction = VGet(0.0f, 0.0f, 0.0f);
 	nextPosition = position; // 初期位置を次のポジションに設定
-	speed = 5.0f;
+	speed = 4.0f;
 }
 
 void Player::Update(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object)
@@ -112,7 +112,7 @@ void Player::ObjectCollision(std::shared_ptr<Stage> stage, std::shared_ptr<Objec
 void Player::Draw()
 {
 	Anim::Draw(position); // アニメーションの描画
-	DrawBoxAA(position.x - 30, position.y - 30, position.x + 30, position.y + 30, GetColor(255, 0, 0), false); // プレイヤーの位置を赤い四角で表示
+	//DrawBoxAA(position.x - 30, position.y - 30, position.x + 30, position.y + 30, GetColor(255, 0, 0), false); // プレイヤーの位置を赤い四角で表示
 }
 
 void Player::SetNextPosition(VECTOR dir)
