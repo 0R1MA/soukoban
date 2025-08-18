@@ -12,29 +12,134 @@ Stage::Stage()
 	// コンストラクタの初期化処理
 	maps = {
 	   {
-		   "###########",
-		   "#    .    #",
-		   "#         #",
-		   "#    $    #",
-		   "#         #",
-		   "#    @    #",
-		   "#       . #",
-		   "#         #",
-		   "#      $  #",
-		   "#         #",
-		   "###########",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXX###XXXX",
+		   "XXXX#.#XXXX",
+		   "XXXX# #XXXX",
+		   "XXXX#$#XXXX",
+		   "XXXX# #XXXX",
+		   "XXXX# #XXXX",
+		   "XXXX#@#XXXX",
+		   "XXXX###XXXX",
+		   "XXXXXXXXXXX",
+	   }, {
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "X#########X",
+		   "X#@      #X",
+		   "X#       #X",
+		   "X# .  $  #X",
+		   "X#       #X",
+		   "X#    $ .#X",
+		   "X#########X",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
 	   },
-	   {
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "X########XX",
+		   "X#@     ##X",
+		   "X#.  $*  #X",
+		   "X#    #  #X",
+		   "X#       #X",
+		   "X#########X",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "X########XX",
+		   "X#@     ##X",
+		   "X#  $$   #X",
+		   "X#  #.  .#X",
+		   "X#       #X",
+		   "X#########X",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXXX####XX",
+		   "X#####  #XX",
+		   "X#@   .$##X",
+		   "X#     $ #X",
+		   "X# #  .  #X",
+		   "X#       #X",
+		   "X#########X",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XX#######XX",
+		   "X##  @  ##X",
+		   "X#   #   #X",
+		   "X#  $*$  #X",
+		   "X#   .   #X",
+		   "X##  .  ##X",
+		   "XX#######XX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "X#######XXX",
+		   "X#     ###X",
+		   "X#    .. #X",
+		   "X#  $$$@ #X",
+		   "X#   # . #X",
+		   "X#########X",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XXXX#####XX",
+		   "XX###  @#XX",
+		   "XX#. *# #XX",
+		   "XX#   $ #XX",
+		   "XX# $. ##XX",
+		   "XX######XXX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+	   },
+		{
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		   "XX######XXX",
+		   "XX#@ ..#XXX",
+		   "XX# #$ ##XX",
+		   "XX# #   #XX",
+		   "XX#  $# #XX",
+		   "XX#  *  #XX",
+		   "XX#######XX",
+		   "XXXXXXXXXXX",
+		   "XXXXXXXXXXX",
+		},
+		 {
 		   "###########",
-		   "# .     . #",
-		   "#   $ $   #",
-		   "#         #",
-		   "#   @     #",
-		   "#         #",
-		   "#   $ $   #",
-		   "# .     . #",
+		   "# ***     #",
+		   "#*        #",
+		   "#* ***    #",
+		   "#*   *    #",
+		   "# *** *** #",
+		   "#    *    #",
+		   "#    * ***#",
+		   "#    *   *#",
+		   "#@   $.** #",
 		   "###########",
-	   }
+		 }
 	};
 	LoadDivGraph("date/Tile.png", 3, 3, 1, 32, 32, stageHandle);
 }
@@ -44,11 +149,20 @@ Stage::~Stage()
 	// デストラクタの後始末処理
 }
 
-void Stage::Initialize(std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game)
+void Stage::Initialize()
 {
 	// ステージの初期化処理
-	// ここで必要なリソースのロードや初期設定を行う
-	// 空白＝床　＃＝壁　.＝ゴール　$＝箱　@＝プレイヤー
+}
+
+void Stage::SetStage(int stageIndex, std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game)
+{
+	// ステージを設定する処理
+	if (stageIndex < 0 || stageIndex >= maps.size())
+	{
+		return; // 無効なステージインデックスの場合は何もしない
+	}
+	currentStage = stageIndex;
+
 	const std::vector<std::string>& Map = maps[currentStage];
 	int object_count = 0, clearPos_count = 0;
 	for (int y = 0; y < stageHeight; ++y)
@@ -57,16 +171,16 @@ void Stage::Initialize(std::shared_ptr<Player> player, std::vector<std::shared_p
 		for (int x = 0; x < stageWidth; ++x)
 		{
 			map[y][x] = Map[y][x];
-			if (map[y][x] == '@')
-				player->Initialize(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
-			else if (map[y][x] == '$')
+			if (map[y][x] == '@' || map[y][x] == '+')
+				player->SetPosition(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+			if (map[y][x] == '$' || map[y][x] == '*')
 			{
-				objects.at(object_count)->Initialize(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+				objects.at(object_count)->SetPosition(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
 				++object_count;
 			}
-			else if (map[y][x] == '.')
+			if (map[y][x] == '.' || map[y][x] == '*' || map[y][x] == '+')
 			{
-				game->Initialize(clearPos_count, VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+				game->SetGoal(clearPos_count, VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
 				++clearPos_count;
 			}
 		}
@@ -83,6 +197,20 @@ void Stage::Update()
 {
 	// ステージの更新処理
 	// ここでゲームのロジックや状態の更新を行う
+}
+
+void Stage::NextStage(std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game)
+{
+	// 次のステージに進む処理
+	currentStage = (currentStage + 1) % maps.size();
+	for (int y = 0; y < stageHeight; ++y)
+	{
+		delete[] map[y];
+	}
+	for (auto obj : objects){
+		obj->Initialize(); // オブジェクトの初期化
+	}
+	SetStage(currentStage, player, objects, game); // 必要なインスタンスを渡して初期化
 }
 
 void Stage::Draw()
@@ -111,6 +239,15 @@ void Stage::Draw()
 					break;
 				case '@': // プレイヤー
 					tileIndex = 1; // プレイヤーも床と同じタイルを使用
+					break;
+				case '+': //　プレイヤーとゴール
+					tileIndex = 2; // プレイヤーとゴールが重なっている場合はゴールタイルを使用
+					break;
+				case '*': // 箱とゴール
+					tileIndex = 2; // 箱とゴールが重なっている場合はゴールタイルを使用
+					break;
+				case 'X': // ステージ外のタイル
+					tileIndex = -1; // 表示しない
 					break;
 			}
 			if (tileIndex != -1)

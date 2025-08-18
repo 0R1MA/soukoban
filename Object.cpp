@@ -20,10 +20,18 @@ Object::~Object()
 	}
 }
 
-void Object::Initialize(VECTOR pos)
+void Object::Initialize()
 {
-	position = pos;											// 位置を設定
+	modelHandle = LoadGraph("date/WoodenCrate.png");		// モデルのハンドルをロード
+	position = VGet(0.0f, 0.0f, 0.0f);										// 位置を設定
 	nextPosition = position;								// 次の位置も初期位置に設定
+}
+
+void Object::SetPosition(VECTOR pos)
+{
+	Initialize();									// 初期化を呼び出してリセット
+	position = pos;										// 位置を設定
+	nextPosition = position;							// 次の位置も同じに設定
 }
 
 void Object::Update()
@@ -60,6 +68,12 @@ void Object::Draw()
 	// オブジェクトの描画処理
 	if (modelHandle != -1)
 	{
-		DrawRotaGraph3((int)position.x-0.1f, (int)position.y+3, 16, 44, 1.9f, 1.5f, 0, modelHandle, TRUE, FALSE);
+		DrawRotaGraph3((int)position.x - 0.1f, (int)position.y + 3, 16, 44, 1.9f, 1.5f, 0, modelHandle, TRUE, FALSE);
+		if (onGoal)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 100);
+			DrawBoxAA((int)position.x - 27, (int)position.y - 29, (int)position.x + 25, (int)position.y + 28, 0x00FF00, TRUE); // ゴールに到達している場合は緑色の四角を描画
+			SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 255);
+		}
 	}
 }

@@ -9,10 +9,12 @@ class Object
 	VECTOR position;	// 位置
 	VECTOR nextPosition;	// 次の位置
 	float speed;		// 移動速度
+	bool onGoal;	// ゴールに到達したかどうか
 
 	Object();
 	~Object();
-	void Initialize(VECTOR pos);
+	void Initialize();
+	void SetPosition(VECTOR pos);
 	void Update();
 	void Draw();
 };

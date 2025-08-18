@@ -1,10 +1,12 @@
 #include "DxLib.h"
+#include <iostream>
 #include <memory>
 #include <vector>
 #include "Anim.h"
 #include "Player.h"
 #include "Stage.h"
 #include "Object.h"
+#include "GameManeger.h"
 
 Player::Player() :Anim("date/IdleAnimations.png", "date/WalkAnimations.png")
 {
@@ -21,15 +23,24 @@ Player::~Player()
 	
 }
 
-void Player::Initialize(VECTOR pos)
+void Player::Initialize()
 {
-	position = pos;
-	direction = VGet(0.0f, 0.0f, 0.0f);
+	position	= VGet(0.0f, 0.0f, 0.0f);
+	direction	= VGet(0.0f, 0.0f, 0.0f);
 	nextPosition = position; // 初期位置を次のポジションに設定
 	speed = 4.0f;
 }
 
-void Player::Update(std::shared_ptr<Stage> stage, std::vector<std::shared_ptr<Object>> objects)
+void Player::SetPosition(VECTOR pos)
+{
+	Initialize(); // 初期化を呼び出してリセット
+	position = pos; // 位置を設定
+	nextPosition = position; // 次の位置も同じに設定
+	direction = VGet(0.0f, 0.0f, 0.0f); // 方向ベクトルをリセット
+	dir = 0;
+}
+
+void Player::Update(std::shared_ptr<GameManeger> game, std::shared_ptr<Stage> stage, std::vector<std::shared_ptr<Object>> objects)
 {
 	if(position.x == nextPosition.x && position.y == nextPosition.y)
 	{
@@ -92,6 +103,18 @@ void Player::Update(std::shared_ptr<Stage> stage, std::vector<std::shared_ptr<Ob
 		}
 	}
 	
+	if (!onMove)
+	{
+		if (nextPosition.x != position.x || nextPosition.y != position.y)
+		{
+			game->SaveState(position, objects); // 状態を保存
+			onMove = true;	// 移動中フラグを立てる
+		}
+	}
+	else if (nextPosition.x == position.x && nextPosition.y == position.y)
+	{
+		onMove = false; // 移動中フラグを下ろす
+	}
 
 	// 移動処理
 	Move();

@@ -3,6 +3,7 @@
 #include <math.h>
 #include <memory>
 #include <vector>
+#include <stack>
 #include "Anim.h"
 #include "Player.h"
 #include "Stage.h"
@@ -29,12 +30,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::shared_ptr<GameManeger>	game	= std::make_shared<GameManeger>();
 	
 	std::vector<std::shared_ptr<Object>> objects;	// オブジェクトのリスト
-	for(int i = 0; i < 10; ++i)						// 例として10個のオブジェクトを作成
+	for(int i = 0; i < 30; ++i)						// 例として10個のオブジェクトを作成
 	{
 		auto obj = std::make_shared<Object>();
 		objects.emplace_back(obj);					// オブジェクトをリストに追加
 	}
-	stage->Initialize(player, objects, game);				// ステージの初期化
+	stage->SetStage(0, player, objects, game);		// ステージの初期化
+
+	SetFontThickness(5);	// フォントの太さを設定
 
 	// 描画先を裏画面にする
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -47,13 +50,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 画面をクリア
 		ClearDrawScreen();
 
+		SetFontSize(20);		// フォントのサイズを設定
+		DrawString(0, 0, "移動 : WASD or ↑←→↓\nリセット : R\n次のステージ : ENTER\nUndo ; B\n", 0xffffff);
+
 		////更新処理////
-		game->Update(objects);
+		game->Update(player, objects);
+		if(game->Reset())
+		{
+			for (auto obj : objects) {
+				obj->Initialize(); // オブジェクトの初期化
+			}
+			stage->SetStage(stage->currentStage, player, objects, game); // 必要なインスタンスを渡して初期化
+		}
+		if(game->NextStage())
+		{
+			stage->NextStage(player, objects, game);	// ステージの更新処理
+		}
 		for (auto obj : objects)
 		{
 			obj->Update();				// オブジェクトの更新処理
 		}
-		player->Update(stage, objects);	// プレイヤーの更新処理
+		player->Update(game, stage, objects);	// プレイヤーの更新処理
 	
 
 		////描画////

@@ -13,13 +13,15 @@ class Stage
 {
 	public:
 	int stageHandle[3];	// ステージのハンドル
-	char* map[stageWidth*stageHeight];	// ステージのマップデータ
+	char* map[stageHeight];	// ステージのマップデータ
 	int currentStage; // 現在のステージ番号
 	std::vector<std::vector<std::string>> maps; // 全ステージのマップデータ
 	Stage();
 	~Stage();
-	void Initialize(std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game);
+	void Initialize();
+	void SetStage(int stageIndex, std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game);
 	void Update();
+	void NextStage(std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game);
 	void Draw();
 	bool isHit(int x, int y);
 };
