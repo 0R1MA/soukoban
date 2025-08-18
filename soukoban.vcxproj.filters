@@ -19,6 +19,9 @@
     <Filter Include="Stage">
       <UniqueIdentifier>{b4b498df-747d-49ae-aca5-b409867171cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{9fb04b7c-809d-4650-b77e-b39f4bde6eaa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,6 +37,9 @@
       <Filter>Stage</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManeger.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,6 +54,9 @@
       <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManeger.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>

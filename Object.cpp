@@ -5,11 +5,10 @@
 
 Object::Object()
 {
-	modelHandle = LoadGraph("date/WoodenCrate.png"); // モデルのハンドルをロード
-	position = VGet(0.0f, 0.0f, 0.0f); // 初期位置を設定
-	nextPosition = position; // 次の位置も初期位置に設定
-	speed = 8.0f; // 移動速度を設定
-	Initialize(VGet(300, 300, 0)); // 初期化関数を呼び出す
+	modelHandle = LoadGraph("date/WoodenCrate.png");		// モデルのハンドルをロード
+	position = VGet(0.0f, 0.0f, 0.0f);						// 初期位置を設定
+	nextPosition = position;								// 次の位置も初期位置に設定
+	speed = 8.0f;											// 移動速度を設定
 }
 
 Object::~Object()
@@ -17,14 +16,14 @@ Object::~Object()
 	// デストラクタの後始末処理
 	if (modelHandle != -1)
 	{
-		DeleteGraph(modelHandle); // モデルのハンドルを削除
+		DeleteGraph(modelHandle);							// モデルのハンドルを削除
 	}
 }
 
 void Object::Initialize(VECTOR pos)
 {
-	position = pos; // 位置を設定
-	nextPosition = position; // 次の位置も初期位置に設定
+	position = pos;											// 位置を設定
+	nextPosition = position;								// 次の位置も初期位置に設定
 }
 
 void Object::Update()

@@ -1,14 +1,41 @@
 #include "DxLib.h"
-#include <math.h>
 #include <memory>
 #include "Stage.h"
 #include "Anim.h"
 #include "Player.h"
 #include "Object.h"
+#include "GameManeger.h"
 
 Stage::Stage()
+	: currentStage(0)
 {
 	// コンストラクタの初期化処理
+	maps = {
+	   {
+		   "###########",
+		   "#    .    #",
+		   "#         #",
+		   "#    $    #",
+		   "#         #",
+		   "#    @    #",
+		   "#       . #",
+		   "#         #",
+		   "#      $  #",
+		   "#         #",
+		   "###########",
+	   },
+	   {
+		   "###########",
+		   "# .     . #",
+		   "#   $ $   #",
+		   "#         #",
+		   "#   @     #",
+		   "#         #",
+		   "#   $ $   #",
+		   "# .     . #",
+		   "###########",
+	   }
+	};
 	LoadDivGraph("date/Tile.png", 3, 3, 1, 32, 32, stageHandle);
 }
 
@@ -17,45 +44,38 @@ Stage::~Stage()
 	// デストラクタの後始末処理
 }
 
-void Stage::Initialize(std::shared_ptr<Player> player, std::shared_ptr<Object> object)
+void Stage::Initialize(std::shared_ptr<Player> player, std::vector<std::shared_ptr<Object>> objects, std::shared_ptr<GameManeger> game)
 {
 	// ステージの初期化処理
 	// ここで必要なリソースのロードや初期設定を行う
 	// 空白＝床　＃＝壁　.＝ゴール　$＝箱　@＝プレイヤー
-	const char* Map[] =
-	{
-		"###########",
-		"#    .    #",
-		"#         #",
-		"#    $    #",
-		"#         #",
-		"#    @    #",
-		"#         #",
-		"#         #",
-		"#         #",
-		"#         #",
-		"###########",
-	};
-	// マップデータの初期化
+	const std::vector<std::string>& Map = maps[currentStage];
+	int object_count = 0, clearPos_count = 0;
 	for (int y = 0; y < stageHeight; ++y)
 	{
-		map[y] = new char[stageWidth + 1]; // 各行のマップデータを確保
+		map[y] = new char[stageWidth + 1];
 		for (int x = 0; x < stageWidth; ++x)
 		{
-			map[y][x] = Map[y][x]; // マップデータをコピー
-			// プレイヤーと箱の位置を設定
-			if (map[y][x] == '@') // プレイヤーの位置
+			map[y][x] = Map[y][x];
+			if (map[y][x] == '@')
+				player->Initialize(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+			else if (map[y][x] == '$')
 			{
-				// プレイヤーの初期位置を設定
-				player->Initialize(VGet(x * 60 + 30, y * 60 + 30, 0.0f)); // プレイヤーの初期位置を設定
+				objects.at(object_count)->Initialize(VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+				++object_count;
 			}
-			else if (map[y][x] == '$') // 箱の位置
+			else if (map[y][x] == '.')
 			{
-				// 箱の初期位置を設定
-				object->Initialize(VGet(x * 60 + 30, y * 60 + 30, 0.0f)); // オブジェクトの初期位置を設定
+				game->Initialize(clearPos_count, VGet(x * 60.f + 30.f, y * 60.f + 30.f, 0.0f));
+				++clearPos_count;
 			}
 		}
-		map[y][stageWidth] = '\0'; // 行末にヌル文字を追加
+		map[y][stageWidth] = '\0';
+	}
+	for (auto obj : objects)
+	{
+		if (obj->position.x == 0 && obj->position.y == 0)
+			obj->modelHandle = -1;
 	}
 }
 
@@ -109,12 +129,12 @@ bool Stage::isHit(int x, int y)
 	// 範囲外チェック
 	if (tileX < 0 || tileX >= stageWidth || tileY < 0 || tileY >= stageHeight)
 	{
-		return false; // 範囲外の場合は衝突しない
+		return false;	// 範囲外の場合は衝突しない
 	}
 	// タイルが壁の場合は衝突
 	if (map[tileY][tileX] == '#')
 	{
-		return true; // 衝突している
+		return true;	// 衝突している
 	}
-	return false; // 衝突していない
+	return false;		// 衝突していない
 }

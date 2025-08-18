@@ -1,5 +1,6 @@
 #include "DxLib.h"
 #include <memory>
+#include <vector>
 #include "Anim.h"
 #include "Player.h"
 #include "Stage.h"
@@ -28,7 +29,7 @@ void Player::Initialize(VECTOR pos)
 	speed = 4.0f;
 }
 
-void Player::Update(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object)
+void Player::Update(std::shared_ptr<Stage> stage, std::vector<std::shared_ptr<Object>> objects)
 {
 	if(position.x == nextPosition.x && position.y == nextPosition.y)
 	{
@@ -82,22 +83,33 @@ void Player::Update(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object
 		nextPosition = position; // 衝突している場合は元の位置に戻す
 	}
 
-	if(nextPosition.x == object->position.x && nextPosition.y == object->position.y)
+	for (auto obj : objects)
 	{
-		// オブジェクトとの衝突判定
-		ObjectCollision(stage, object);
+		if (nextPosition.x == obj->position.x && nextPosition.y == obj->position.y)
+		{
+			// オブジェクトとの衝突判定
+			ObjectCollision(stage, obj, objects);
+		}
 	}
+	
 
 	// 移動処理
 	Move();
 	Anim::Update(); // アニメーションの更新
 }
 
-void Player::ObjectCollision(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object)
+void Player::ObjectCollision(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object, std::vector<std::shared_ptr<Object>> objects)
 {
 	VECTOR nextObjctPos = VAdd(object->position, direction); // オブジェクトの次の位置を計算
 	// オブジェクトの移動可能かどうかを判定
 	bool ismove = stage->isHit((int)nextObjctPos.x, (int)nextObjctPos.y);
+	for (auto obj : objects)
+	{
+		if (obj->position.x == nextObjctPos.x && obj->position.y == nextObjctPos.y)
+		{
+			ismove = true;
+		}
+	}
 	if (!ismove)
 	{
 		// オブジェクトが移動可能な場合

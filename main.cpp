@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Object.h"
+#include "GameManeger.h"
 
 const int ScreenX = 660;
 const int ScreenY = 660;
@@ -23,19 +24,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	// 初期化
-	std::shared_ptr<Player> player	= std::make_shared<Player>();
-	std::shared_ptr<Stage> stage	= std::make_shared<Stage>();
-	std::shared_ptr<Object> object	= std::make_shared<Object>();
+	std::shared_ptr<Player>			player	= std::make_shared<Player>();
+	std::shared_ptr<Stage>			stage	= std::make_shared<Stage>();
+	std::shared_ptr<GameManeger>	game	= std::make_shared<GameManeger>();
 	
-	std::vector<std::shared_ptr<Object>> objects; // オブジェクトのリスト
-	for(int i = 0; i < 5; ++i) // 例として10個のオブジェクトを作成
+	std::vector<std::shared_ptr<Object>> objects;	// オブジェクトのリスト
+	for(int i = 0; i < 10; ++i)						// 例として10個のオブジェクトを作成
 	{
 		auto obj = std::make_shared<Object>();
-		objects.emplace_back(obj); // オブジェクトをリストに追加
+		objects.emplace_back(obj);					// オブジェクトをリストに追加
 	}
-
-
-	stage->Initialize(player, object); // ステージの初期化
+	stage->Initialize(player, objects, game);				// ステージの初期化
 
 	// 描画先を裏画面にする
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -48,12 +47,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 画面をクリア
 		ClearDrawScreen();
 
-		object->Update();				// オブジェクトの更新処理
-		player->Update(stage, object);	// プレイヤーの更新処理
+		////更新処理////
+		game->Update(objects);
+		for (auto obj : objects)
+		{
+			obj->Update();				// オブジェクトの更新処理
+		}
+		player->Update(stage, objects);	// プレイヤーの更新処理
+	
 
+		////描画////
 		stage->Draw();					// ステージの描画処理
-		object->Draw();					// オブジェクトの描画処理
+		for (auto obj : objects)
+		{
+			obj->Draw();				// オブジェクトの描画処理
+		}
 		player->Draw();					// プレイヤーの描画処理
+		game->Draw();
 
 		// 裏画面の内容を表画面に反映
 		ScreenFlip();
@@ -69,8 +79,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// 後始末
 	player	= nullptr;
-	object	= nullptr;
 	stage	= nullptr;
+	game	= nullptr;
+	objects.clear();
 	DxLib_End();
 
 	// ソフト終了

@@ -9,8 +9,8 @@ public:
 	Player();
 	~Player();
 	void Initialize(VECTOR pos);
-	void Update(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object);
-	void ObjectCollision(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object);	// オブジェクトとの衝突判定
+	void Update(std::shared_ptr<Stage> stage, std::vector<std::shared_ptr<Object>> objects);
+	void ObjectCollision(std::shared_ptr<Stage> stage, std::shared_ptr<Object> object, std::vector<std::shared_ptr<Object>> objects);	// オブジェクトとの衝突判定
 	void Draw();
 
 private:
