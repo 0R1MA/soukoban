@@ -16,6 +16,7 @@ public:
 	std::vector<VECTOR> goalPosition;
 	std::stack<GameState> history;
 	bool isClear;
+	bool _next;
 	bool undo;
 
 	GameManeger();

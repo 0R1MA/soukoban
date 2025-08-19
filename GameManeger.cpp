@@ -11,6 +11,7 @@
 GameManeger::GameManeger()
 {
 	isClear = false;
+	_next	= false;
 	undo	= false;
 }
 
@@ -123,9 +124,17 @@ bool GameManeger::NextStage()
 
 	if (CheckHitKey(KEY_INPUT_LSHIFT) && CheckHitKey(KEY_INPUT_N))
 	{
-		goalPosition.clear();
-		history = std::stack<GameState>(); // 履歴をクリア
-		return true; // ステージクリアで次のステージへ進む
+		if (!_next)
+		{
+			_next = true;
+			goalPosition.clear();
+			history = std::stack<GameState>(); // 履歴をクリア
+			return true; // ステージクリアで次のステージへ進む
+		}
+	}
+	else
+	{
+		_next = false;
 	}
 
 	// 次のステージへ進む処理を実装
